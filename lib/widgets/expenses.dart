@@ -4,16 +4,31 @@ import 'package:personal_expenses_managing_app/widgets/expenses_list/expenses_li
 import 'package:personal_expenses_managing_app/widgets/new_expense.dart';
 class Expenses extends StatefulWidget {
   const Expenses({super.key});
+ 
   @override
   State<Expenses> createState() {
     return _ExpensesState();
   }
 }
 class _ExpensesState extends State<Expenses> {
+  void addExpenses(Expense expense)
+  {
+setState(() {
+  _registeredExpenses.add(expense);
+});
+  }
+  void removeExpenses(Expense expense)
+  {
+    setState(() {
+       _registeredExpenses.remove(expense);
+    });
+    
+  }
   void _addNewExpense()
   {
-    showModalBottomSheet(context: context, builder: (ctx) =>const NewExpense(),);
+    showModalBottomSheet(context: context, builder: (ctx) => NewExpense(addNewExpense: addExpenses), isScrollControlled: true);
   }
+  
   final List<Expense> _registeredExpenses = [
     Expense(
         title: 'Flutter',
@@ -56,7 +71,7 @@ class _ExpensesState extends State<Expenses> {
       ],
       ),
       body: Column(
-        children:  [const Text('THe chart'),Expanded(child: ExpensesList(expenses: _registeredExpenses),) ],
+        children:  [const Text('THe chart'),Expanded(child: ExpensesList(expenses: _registeredExpenses,onRemoval: removeExpenses),) ],
       ),
     );
   }

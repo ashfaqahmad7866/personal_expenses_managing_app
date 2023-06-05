@@ -3,6 +3,7 @@ import 'package:personal_expenses_managing_app/models/expense.dart';
 
 class ExpensesItems extends StatelessWidget {
   const ExpensesItems({super.key, required this.expense});
+  
   final Expense expense;
   @override
   Widget build(BuildContext context) {

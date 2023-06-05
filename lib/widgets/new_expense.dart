@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:personal_expenses_managing_app/models/expense.dart';
 import 'package:personal_expenses_managing_app/models/expense.dart';
+
 class NewExpense extends StatefulWidget {
   const NewExpense({super.key});
   @override
@@ -15,19 +16,46 @@ class _NewExpenseState extends State<NewExpense> {
   // var enteredValue='';
   final titleController = TextEditingController();
   final amountController = TextEditingController();
-    DateTime ? _pickedDate;
+  DateTime? _pickedDate;
+  Category _selectedCategory = Category.leisure;
   void _presentDatePicker() async {
     final now = DateTime.now();
     final firstDate = DateTime(now.year - 1, now.month, now.day);
-  final selectedDate= await showDatePicker (
+    final selectedDate = await showDatePicker(
         context: context,
         initialDate: now,
         firstDate: firstDate,
         lastDate: now);
-        setState(() {
-        _pickedDate = selectedDate;
-        });
+    setState(() {
+      _pickedDate = selectedDate;
+    });
   }
+
+  void saveNewExpense() {
+    final amountValue = amountController.text;
+    final dataEntered = double.tryParse(amountValue);
+    final invaliData=dataEntered==null ||dataEntered<=0;
+    if (titleController.text.trim().isEmpty||invaliData) {
+      showDialog(
+        context: context,
+        builder: (ctx) { return
+          AlertDialog(
+            title: const Text('Invalid data entered'),
+            content: const Text(
+                'Please make sure title, amount, category and date was entered'),
+            actions: [
+              TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: const Text('Okay'))
+            ],
+          );
+        },
+       
+      );
+   return;
+    }
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -73,7 +101,9 @@ class _NewExpenseState extends State<NewExpense> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                    Text(_pickedDate==null? 'No date selected':formatter.format(_pickedDate!)),
+                  Text(_pickedDate == null
+                      ? 'No date selected'
+                      : formatter.format(_pickedDate!)),
                   IconButton(
                     onPressed: _presentDatePicker,
                     icon: const Icon(Icons.calendar_month),
@@ -82,8 +112,35 @@ class _NewExpenseState extends State<NewExpense> {
               ))
             ],
           ),
+          const SizedBox(
+            height: 10,
+          ),
           Row(
             children: [
+              Row(
+                children: [
+                  DropdownButton(
+                    value: _selectedCategory,
+                    items: Category.values
+                        .map(
+                          (category) => DropdownMenuItem(
+                            value: category,
+                            child: Text(category.name),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (value) {
+                      if (value == null) {
+                        return;
+                      }
+                      setState(() {
+                        _selectedCategory = value;
+                      });
+                    },
+                  )
+                ],
+              ),
+              const Spacer(),
               TextButton(
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.black,
@@ -104,10 +161,7 @@ class _NewExpenseState extends State<NewExpense> {
                         borderRadius: BorderRadius.circular(40)),
                     foregroundColor: Colors.black,
                     backgroundColor: const Color.fromARGB(255, 248, 249, 250)),
-                onPressed: () {
-                  // print(enteredValue);
-                  print(titleController.text + ' ' + amountController.text);
-                },
+                onPressed: saveNewExpense,
                 child: const Text('Save Expense'),
               ),
             ],

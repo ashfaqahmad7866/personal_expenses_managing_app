@@ -24,7 +24,7 @@ class ExpensesItems extends StatelessWidget {
               const Spacer(),
               Icon(categoryIcons[expense.category]),
               const SizedBox(
-                width: 8,
+                width: 8, 
               ),
               Padding(
                 padding: const EdgeInsets.only(right: 10),

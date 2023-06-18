@@ -49,7 +49,7 @@ class _NewExpenseState extends State<NewExpense> {
                 onPressed: () => Navigator.pop(ctx),
                 child: const Text('Okay'),
               ),
-            ],
+            ], 
           );
         },
       );
@@ -148,14 +148,15 @@ class _NewExpenseState extends State<NewExpense> {
                 ],
               ),
               const Spacer(),
-              TextButton(
+              ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.black,
-                  backgroundColor: Colors.white,
-                ),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(40)),
+                    foregroundColor: Colors.black,
+                    backgroundColor: const Color.fromARGB(255, 248, 249, 250)),
                 onPressed: () {
                   Navigator.pop(context);
-                },
+                }, 
                 child: const Text('Cancel'),
               ),
               const SizedBox(

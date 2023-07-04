@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:personal_expenses_managing_app/chart/chart.dart';
 import 'package:personal_expenses_managing_app/models/expense.dart';
 import 'package:personal_expenses_managing_app/widgets/expenses_list/expenses_list.dart';
 import 'package:personal_expenses_managing_app/widgets/new_expense.dart';
@@ -20,19 +21,22 @@ class _ExpensesState extends State<Expenses> {
   }
 
   void removeExpenses(Expense expense) {
-    final expenseIndex=_registeredExpenses.indexOf(expense);
+    final expenseIndex = _registeredExpenses.indexOf(expense);
     setState(() {
       _registeredExpenses.remove(expense);
     });
     ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar( SnackBar(
-      content:const Text('Message deleted!'),
-      duration:const Duration(seconds: 3),
-      action: SnackBarAction(label: 'Undo', onPressed:() {
-        setState(() {
-          _registeredExpenses.insert(expenseIndex, expense);
-        });
-      },),
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: const Text('Message deleted!'),
+      duration: const Duration(seconds: 3),
+      action: SnackBarAction(
+        label: 'Undo',
+        onPressed: () {
+          setState(() {
+            _registeredExpenses.insert(expenseIndex, expense);
+          });
+        },
+      ),
     ));
   }
 
@@ -49,35 +53,11 @@ class _ExpensesState extends State<Expenses> {
         amount: 41.90,
         category: Category.work,
         date: DateTime.now()),
-    Expense(
-        title: 'London',
-        amount: 15.90,
-        category: Category.travel,
-        date: DateTime.now()),
-    Expense(
-        title: 'Flutter',
-        amount: 90.90,
-        category: Category.work,
-        date: DateTime.now()),
-    Expense(
-        title: 'Pizza',
-        amount: 12.51,
-        category: Category.food,
-        date: DateTime.now()),
-    Expense(
-        title: 'Busy',
-        amount: 21.10,
-        category: Category.work,
-        date: DateTime.now()),
-    Expense(
-        title: 'Free',
-        amount: 25.90,
-        category: Category.leisure,
-        date: DateTime.now()),
   ];
   @override
   Widget build(BuildContext context) {
-    Widget mainContent =  const Center(
+    final width = MediaQuery.of(context).size.width;
+    Widget mainContent = const Center(
       child: Text('No expense found, try adding some!'),
     );
     if (_registeredExpenses.isNotEmpty) {
@@ -96,12 +76,21 @@ class _ExpensesState extends State<Expenses> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          const Text('THe chart'),
-          mainContent,
-        ],
-      ),
+      body: width < 600
+          ? Column(
+              children: [
+                Chart(expenses: _registeredExpenses),
+                mainContent,
+              ],
+            )
+          : Row(
+            children: [
+              Expanded(child: Chart(expenses: _registeredExpenses),),
+              Expanded(
+                child: mainContent,
+              )
+            ],
+          ),
     );
   }
 }
